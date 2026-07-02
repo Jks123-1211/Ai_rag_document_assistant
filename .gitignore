@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Uploads
+server/uploads/
+
+# Logs
+*.log
+
+# Build folders
+dist/
+build/
+
+# Vite
+client/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Cache
+.cache/
