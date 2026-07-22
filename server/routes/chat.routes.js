@@ -6,6 +6,9 @@ from "../services/documentStore.js";
 import { askGemini }
 from "../services/gemini.service.js";
 
+import { summarizeDocuments }
+from "../services/summary.service.js";
+
 import { retrieveChunks }
 from "../services/retrieval.service.js";
 
@@ -35,10 +38,12 @@ router.post("/", async (req, res) => {
   try {
 
     const question =
-      req.body.question;
+      req.body.question?.trim();
 
     const chatId =
-      String(req.body.chatId);
+      req.body.chatId
+        ? String(req.body.chatId)
+        : "";
 
     console.log(
       "REQUEST BODY:",
@@ -57,6 +62,14 @@ router.post("/", async (req, res) => {
 
       return res.status(400).json({
         answer: "Chat ID is missing"
+      });
+
+    }
+
+    if (!question) {
+
+      return res.status(400).json({
+        answer: "Question is missing"
       });
 
     }
@@ -109,57 +122,25 @@ router.post("/", async (req, res) => {
 
     }
 
+    const lowerQuestion =
+      question.toLowerCase();
+
     const isSummaryRequest =
-      question
-        .toLowerCase()
-        .includes("summarize")
+      lowerQuestion.includes("summarize")
       ||
-      question
-        .toLowerCase()
-        .includes("summary");
+      lowerQuestion.includes("summarise")
+      ||
+      lowerQuestion.includes("summary");
 
     if (isSummaryRequest) {
-
-      const allContent =
-        documents
-          .map(
-            (doc) =>
-              `
-DOCUMENT:
-${doc.name}
-
-${doc.chunks.join("\n")}
-`
-          )
-          .join("\n\n");
-
-      const summaryPrompt = `
-You are an AI document assistant.
-
-Summarize the uploaded document(s).
-
-Provide:
-
-1. Executive Summary
-
-2. Key Topics
-
-3. Important Information
-
-4. Conclusion
-
-Document Content:
-
-${allContent}
-`;
 
       console.log(
         "Generating Summary..."
       );
 
       const answer =
-        await askGemini(
-          summaryPrompt
+        await summarizeDocuments(
+          documents
         );
       console.log(
         "BEFORE ASSISTANT MESSAGE:",

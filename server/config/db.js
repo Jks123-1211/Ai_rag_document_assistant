@@ -4,9 +4,11 @@ const connectDB = async () => {
 
   try {
 
-    await mongoose.connect(
-      "mongodb://localhost:27017/ai_rag_assistant"
-    );
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI environment variable is not set");
+    }
+
+    await mongoose.connect(process.env.MONGODB_URI);
 
     console.log(
       "MongoDB Connected"

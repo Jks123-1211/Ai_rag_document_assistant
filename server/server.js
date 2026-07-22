@@ -9,8 +9,7 @@ import {
 
 
 dotenv.config();
-console.log("API KEY:", process.env.GEMINI_API_KEY);
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 await connectDB();
 
 await rebuildAllIndexes();

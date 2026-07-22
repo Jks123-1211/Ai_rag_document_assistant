@@ -48,7 +48,10 @@ const parseResponseText = (
 };
 
 export const askGemini =
-  async (prompt) => {
+  async (
+    prompt,
+    options = {}
+  ) => {
 
     if (!API_KEY) {
 
@@ -95,8 +98,10 @@ export const askGemini =
                   },
                 ],
                 generationConfig: {
-                  temperature: 0.2,
-                  maxOutputTokens: 512,
+                  temperature:
+                    options.temperature ?? 0.2,
+                  maxOutputTokens:
+                    options.maxOutputTokens ?? 512,
                 },
               }),
             }
