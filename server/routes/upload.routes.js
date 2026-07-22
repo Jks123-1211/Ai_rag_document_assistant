@@ -1,5 +1,7 @@
 import express from "express";
 import multer from "multer";
+import fs from "fs";
+import path from "path";
 import { extractPdfText } from "../services/pdf.service.js";
 import { addDocument } from "../services/documentStore.js";
 import { chunkText } from "../utils/chunkText.js";
@@ -8,10 +10,19 @@ from "../services/vectorStore.service.js";
 
 const router = express.Router();
 
+const uploadDirectory = path.join(
+  process.cwd(),
+  "uploads"
+);
+
+fs.mkdirSync(uploadDirectory, {
+  recursive: true,
+});
+
 const storage = multer.diskStorage({
 
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, uploadDirectory);
   },
 
   filename: function (req, file, cb) {
